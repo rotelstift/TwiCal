@@ -1,4 +1,26 @@
 <% provide(:title, "Home") %>
 
 <h1>Calendar#home</h1>
-<p>Find me in app/views/calendar/home.html.erb</p>
+
+<h2><%= @now.year %>年<%= @now.month %>月</h2>
+
+<table>
+  <tr><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th><th>日</th></tr>
+  <% for i in 0...@calendar.length do %>
+    <% if (i % 7) == 0 then %>
+      <tr>
+    <% end %>
+    <td>
+      <% if @calendar[i].month != @now.month then %>
+        <span class="not_this_month">
+      <% end %>
+      <%= @calendar[i].day %>
+      <% if @calendar[i].month != @now.month then %>
+        </span>
+      <% end %>
+    </td>
+    <% if (i % 7) == 6 then %>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
