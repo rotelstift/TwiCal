@@ -2,9 +2,8 @@
 
 <h1>Calendar#home</h1>
 
-<h2><%= @now.year %>年<%= @now.month %>月</h2>
-
 <table>
+  <caption><%= @now.year %>年<%= @now.month %>月</caption>
   <tr><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th><th>日</th></tr>
   <% for i in 0...@calendar.length do %>
     <% if (i % 7) == 0 then %>
@@ -12,7 +11,7 @@
     <% end %>
     <td>
       <% if @calendar[i].month != @now.month then %>
-        <span class="not_this_month">
+        <span class="not_this_month"><%= @calendar[i].month %> /
       <% end %>
       <%= @calendar[i].day %>
       <% if @calendar[i].month != @now.month then %>
