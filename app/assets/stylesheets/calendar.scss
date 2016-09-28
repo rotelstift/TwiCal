@@ -1,28 +1,3 @@
 // Place all the styles related to the Calendar controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-
-caption {
-  text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-}
-
-th {
-  border-right: 1px #999999 dotted;
-  border-bottom: 1px #999999 dotted;
-}
-
-td {
-  width: 100px;
-  height: 80px;
-  border-right: 1px #999999 dotted;
-  border-bottom: 1px #999999 dotted;
-  text-align: right;
-  vertical-align: top;
-  padding: 3px;
-}
-
-.not_this_month{
-    color: #999999;
-}

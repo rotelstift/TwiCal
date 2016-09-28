@@ -1,0 +1,41 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+.container{
+  width: 720px;
+}
+
+header{
+  .nav {
+    text-align: right;
+  }
+}
+
+caption {
+  text-align: center;
+  font-size: 2em;
+}
+
+th {
+  border-right: 1px #999999 dotted;
+  border-bottom: 1px #999999 dotted;
+  text-align: center;
+}
+
+td {
+  width: 100px;
+  height: 80px;
+  border-right: 1px #999999 dotted;
+  border-bottom: 1px #999999 dotted;
+  text-align: right;
+  vertical-align: top;
+  padding: 3px;
+}
+
+.not_this_month{
+    color: #999999;
+}
+
+#today {
+  background-color: #ccc;
+}
