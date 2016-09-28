@@ -48,8 +48,12 @@ class CalendarController < ApplicationController
   end
 
   private def date_validation(str)
-    y, m, d = str.split("-").map(&:to_i)
-    return Date.valid_date?(y, m, d)
+    begin
+      y, m, d = str.split("-").map(&:to_i)
+      return Date.valid_date?(y, m, d)
+    rescue
+      return false
+    end
   end
 
 end
