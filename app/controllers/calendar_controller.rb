@@ -16,13 +16,21 @@ class CalendarController < ApplicationController
 
   def calendar
     # 表示したい日付を設定する
-    @display_time = Date.parse(params[:display_time])
 
-    # 月初めの日付と月終わりの日付を設定する。
-    @beginning_of_month = @display_time.beginning_of_month
-    @end_of_month = @display_time.end_of_month
+    if date_validation(params[:display_time]) then
+      @display_time = Date.parse(params[:display_time])
 
-    @calendar = set_calendar(@beginning_of_month, @end_of_month)
+      # 月初めの日付と月終わりの日付を設定する。
+      @beginning_of_month = @display_time.beginning_of_month
+      @end_of_month = @display_time.end_of_month
+
+      @calendar = set_calendar(@beginning_of_month, @end_of_month)
+
+    else
+      redirect_to(root_path)
+    end
+
+
   end
 
   private def set_calendar(beginning, ending)
@@ -37,6 +45,11 @@ class CalendarController < ApplicationController
 
     return calendar_ary
 
+  end
+
+  private def date_validation(str)
+    y, m, d = str.split("-").map(&:to_i)
+    return Date.valid_date?(y, m, d)
   end
 
 end
