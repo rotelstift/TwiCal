@@ -15,9 +15,10 @@ class CalendarController < ApplicationController
   end
 
   def calendar
-    # 表示したい日付を設定する
-
-    if date_validation(params[:display_time]) then
+    # 渡ってきたパラメータにvalidationをかけて、
+    # 正しくなかったらrootにリダイレクトしている
+    if date_valid?(params[:display_time]) then
+      # 表示したい日付を設定する
       @display_time = Date.parse(params[:display_time])
 
       # 月初めの日付と月終わりの日付を設定する。
@@ -47,13 +48,12 @@ class CalendarController < ApplicationController
 
   end
 
-  private def date_validation(str)
-    begin
-      y, m, d = str.split("-").map(&:to_i)
-      return Date.valid_date?(y, m, d)
-    rescue
-      return false
-    end
+  # 日付のvalidationを行う関数
+  # strに不正な文字列が渡ってきた場合rescueが動き、
+  # 不正な日付(2016-2-31など)が渡ってきた場合
+  # !! Date.parse(str)でfalseが返る
+  private def date_valid?(str)
+    !! Date.parse(str) rescue false
   end
 
 end

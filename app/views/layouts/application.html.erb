@@ -13,7 +13,12 @@
   <header>
     <h1>TwiCal</h1>
     <p class="nav">
-      <%= link_to 'Home', root_path %>
+      <%= link_to 'Home', root_path %> :
+      <% unless logged_in? %>
+        <%= link_to 'Login', '/auth/twitter' %>
+      <% else %>
+        <%= link_to 'Logout', logout_path %>
+      <% end %>
     </p>
   </header>
 
