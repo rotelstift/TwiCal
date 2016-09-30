@@ -1,4 +1,5 @@
 require 'date'
+include TweetsModule
 
 class CalendarController < ApplicationController
   def home
@@ -12,7 +13,11 @@ class CalendarController < ApplicationController
 
     @calendar = set_calendar(@beginning_of_month, @end_of_month)
 
+    #SessionsControllerより
     current_user
+
+    #TweetsControllerより
+    user_timeline
 
   end
 
@@ -28,6 +33,8 @@ class CalendarController < ApplicationController
       @end_of_month = @display_time.end_of_month
 
       @calendar = set_calendar(@beginning_of_month, @end_of_month)
+
+      current_user
 
     else
       redirect_to(root_path)
