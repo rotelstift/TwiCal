@@ -17,7 +17,7 @@ class CalendarController < ApplicationController
     current_user
 
     #TweetsModuleより
-    user_timeline(@calendar, @current_user.nickname)
+    user_timeline(@calendar)
 
   end
 

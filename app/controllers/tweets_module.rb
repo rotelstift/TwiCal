@@ -3,7 +3,7 @@ require 'date'
 
 module TweetsModule
 
-  def user_timeline(calendar, current_user)
+  def user_timeline(calendar)
     client = Twitter::REST::Client.new do |config|
       config.consumer_key = Rails.application.secrets.twitter_api_key
       config.consumer_secret = Rails.application.secrets.twitter_api_secret
