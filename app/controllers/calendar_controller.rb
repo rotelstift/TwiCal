@@ -12,6 +12,8 @@ class CalendarController < ApplicationController
 
     @calendar = set_calendar(@beginning_of_month, @end_of_month)
 
+    current_user
+
   end
 
   def calendar
@@ -30,8 +32,6 @@ class CalendarController < ApplicationController
     else
       redirect_to(root_path)
     end
-
-
   end
 
   private def set_calendar(beginning, ending)

@@ -17,7 +17,7 @@
       <% unless logged_in? %>
         <%= link_to 'Login', '/auth/twitter' %>
       <% else %>
-        <%= link_to 'Logout', logout_path %>
+        <%= link_to 'Logout@'+@current_user.nickname, logout_path %>
       <% end %>
     </p>
   </header>
