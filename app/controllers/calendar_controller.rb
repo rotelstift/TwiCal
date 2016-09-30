@@ -13,11 +13,11 @@ class CalendarController < ApplicationController
 
     @calendar = set_calendar(@beginning_of_month, @end_of_month)
 
-    #SessionsControllerより
+    #ApplicationControllerより
     current_user
 
-    #TweetsControllerより
-    user_timeline
+    #TweetsModuleより
+    user_timeline(@calendar, @current_user.nickname)
 
   end
 

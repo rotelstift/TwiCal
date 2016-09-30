@@ -1,9 +1,9 @@
 require 'twitter'
+require 'date'
 
-#class TweetsController < ApplicationController
 module TweetsModule
 
-  def user_timeline
+  def user_timeline(calendar, current_user)
     client = Twitter::REST::Client.new do |config|
       config.consumer_key = Rails.application.secrets.twitter_api_key
       config.consumer_secret = Rails.application.secrets.twitter_api_secret
@@ -12,10 +12,23 @@ module TweetsModule
     end
 
     @tweets = Array.new
+    @tweet_counts_of_day = Array.new
 
-    client.user_timeline(count: 10).each do |tweet|
+    (1..calendar[0].end_of_month.day).each do |day|
+      @tweet_counts_of_day[day] = 0
+      @tweets[day] = []
+    end
+
+    #client.search("", {from: current_user, since: Date.today.beginning_of_month}).each do |tweet|
+    client.user_timeline(count: 200).each do |tweet|
       text = tweet.full_text
-      @tweets.push(text)
+      date_time = tweet.created_at
+
+      if date_time.month == Date.today.month then
+        @tweet_counts_of_day[date_time.day] += 1
+
+        @tweets[date_time.day].push({text: text, date_time: date_time})
+      end
     end
 
   end
