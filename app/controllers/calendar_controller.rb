@@ -17,7 +17,7 @@ class CalendarController < ApplicationController
     current_user
 
     #TweetsModuleより
-    user_timeline(@calendar)
+    user_timeline(@calendar, @display_time)
 
   end
 
@@ -35,6 +35,9 @@ class CalendarController < ApplicationController
       @calendar = set_calendar(@beginning_of_month, @end_of_month)
 
       current_user
+
+      #TweetsModuleより
+      user_timeline(@calendar, @display_time)
 
     else
       redirect_to(root_path)
