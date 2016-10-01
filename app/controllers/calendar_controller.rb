@@ -1,5 +1,6 @@
 require 'date'
 include TweetsModule
+include SessionsHelper
 
 class CalendarController < ApplicationController
   def home
@@ -16,8 +17,10 @@ class CalendarController < ApplicationController
     #ApplicationControllerより
     current_user
 
-    #TweetsModuleより
-    user_timeline(@calendar, @display_time)
+    if logged_in? then
+      #TweetsModuleより
+      user_timeline(@calendar, @display_time)
+    end
 
   end
 
@@ -36,8 +39,10 @@ class CalendarController < ApplicationController
 
       current_user
 
-      #TweetsModuleより
-      user_timeline(@calendar, @display_time)
+      if logged_in? then
+        #TweetsModuleより
+        user_timeline(@calendar, @display_time)
+      end
 
     else
       redirect_to(root_path)
