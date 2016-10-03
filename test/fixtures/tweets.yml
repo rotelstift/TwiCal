@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  older_datetime: MyString
+  datetime: MyString
+  tweet_id: MyString
+  string: MyString
+
+two:
+  older_datetime: MyString
+  datetime: MyString
+  tweet_id: MyString
+  string: MyString

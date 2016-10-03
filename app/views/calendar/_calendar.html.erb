@@ -31,7 +31,7 @@
       <%= @calendar[i].day %>
 
       <% if @calendar[i].month == @display_time.month then %>
-      <p class="tweet_count">
+        <p class="tweet_count">
         <%#= @tweet_counts_of_day[@calendar[i].day] %>
         <% if @tweets then %>
           <%= @tweets[@calendar[i].day].count %>
@@ -59,10 +59,10 @@
   <% @tweets.each do |tweet_day| %>
     <% if tweet_day then %>
       <% tweet_day.each do |tweet| %>
-        <p><%= tweet[:text] %><br><%= tweet[:date_time] %></p>
+        <p><%= tweet[:text] %><br><%= tweet[:date_time] %> : <%= tweet[:id] %></p>
       <% end %>
     <% end %>
   <% end %>
 
-  <p><%= @tweets.count %></p>
+  <p><%= @tweet_counts_of_month %></p>
 <% end %>

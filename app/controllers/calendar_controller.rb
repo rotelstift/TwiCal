@@ -8,18 +8,18 @@ class CalendarController < ApplicationController
     # 今日の日付を設定する
     @display_time = Date.today
 
-    # 月初めの日付と月終わりの日付を設定する。
-    @beginning_of_month = @display_time.beginning_of_month
-    @end_of_month = @display_time.end_of_month
-
-    @calendar = set_calendar(@beginning_of_month, @end_of_month)
+    @calendar = set_calendar(@display_time)
 
     #ApplicationControllerより
     current_user
 
     if logged_in? then
       #TweetsModuleより
-      user_timeline(@calendar, @display_time)
+      # older_id = user_timeline(@calendar, @display_time)
+      #
+      # @tweets_in_this_month = (@display_time)
+      @tweets = tweets_in_this_month(@display_time, @current_user)
+
     end
 
   end
@@ -31,17 +31,16 @@ class CalendarController < ApplicationController
       # 表示したい日付を設定する
       @display_time = Date.parse(params[:display_time])
 
-      # 月初めの日付と月終わりの日付を設定する。
-      @beginning_of_month = @display_time.beginning_of_month
-      @end_of_month = @display_time.end_of_month
-
-      @calendar = set_calendar(@beginning_of_month, @end_of_month)
+      @calendar = set_calendar(@display_time)
 
       current_user
 
       if logged_in? then
         #TweetsModuleより
-        user_timeline(@calendar, @display_time)
+        #older_id = user_timeline(@calendar, @display_time)
+        # p older_id
+        @tweets = tweets_in_this_month(@display_time, @current_user)
+        # older_user_timeline(@calendar, @display_time, older_id)
       end
 
     else
@@ -49,11 +48,16 @@ class CalendarController < ApplicationController
     end
   end
 
-  private def set_calendar(beginning, ending)
+  private def set_calendar(display_time)
     calendar_ary = Array.new
 
-    start = beginning.beginning_of_week
-    last = ending.end_of_week
+    # 月初めの日付と月終わりの日付を設定する。
+    beginning_of_month = display_time.beginning_of_month
+    end_of_month = display_time.end_of_month
+
+    #カレンダーの始まりの日と終わりの日を設定する。
+    start = beginning_of_month.beginning_of_week
+    last = end_of_month.end_of_week
 
     for d in start..last do
       calendar_ary.push(d)
