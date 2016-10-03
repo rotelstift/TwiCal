@@ -14,17 +14,16 @@ module TweetsModule
     @tweet_counts_of_month = 0
 
     # @current_user = current_user
-      tweet_db = Tweet.new
-      tweet_db.user = current_user
-      tweet_db.datetime = DateTime.now
+    tweet_db = TweetDb.new
+    tweet_db.user = current_user
+    # tweet_db.datetime = DateTime.now
     # timelineの初期化
     timeline = nil
 
     # もしdisplay_timeに近い時間のtweet_idがセットされていたら
     # それを読み込んでuser_timelineに渡したいなぁ。。。
-    tweet_id = tweet_db.get_older_tweet(display_time)
-    p 'tweet_id'
-    p tweet_id
+    tweet_id = tweet_db.get_nearest_tweet(display_time, current_user.id)
+
     # if tweet_id then
     #   timeline = user_timeline(TWEETS_TO_GET, tweet_id)
     # end
@@ -34,11 +33,14 @@ module TweetsModule
     begin
       if timeline then
         timeline = user_timeline(TWEETS_TO_GET, timeline.last.id)
+      elsif tweet_id
+        timeline = user_timeline(TWEETS_TO_GET, tweet_id)
       else
         timeline = user_timeline(TWEETS_TO_GET)
       end
 
-      tweet_db.tweet = timeline.first
+
+      # tweet_db.tweet = timeline.first
       timeline.each do |tweet|
         if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
           @tweet_counts_of_month += 1
@@ -54,8 +56,8 @@ module TweetsModule
 
     for i in 1..display_time.end_of_month.day do
       if tweets_in_this_month[i].last then
-        tweet_db.set_older_tweet(tweets_in_this_month[i].last)
-        tweet_db.save
+        tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
+        # tweet_db.save
         break
       end
     end
