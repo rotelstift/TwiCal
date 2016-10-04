@@ -15,9 +15,6 @@ class CalendarController < ApplicationController
 
     if logged_in? then
       #TweetsModuleより
-      # older_id = user_timeline(@calendar, @display_time)
-      #
-      # @tweets_in_this_month = (@display_time)
       @tweets = tweets_in_this_month(@display_time, @current_user)
 
     end
@@ -37,15 +34,15 @@ class CalendarController < ApplicationController
 
       if logged_in? then
         #TweetsModuleより
-        #older_id = user_timeline(@calendar, @display_time)
-        # p older_id
         @tweets = tweets_in_this_month(@display_time, @current_user)
-        # older_user_timeline(@calendar, @display_time, older_id)
       end
 
     else
       redirect_to(root_path)
     end
+  end
+
+  def schedule
   end
 
   private def set_calendar(display_time)

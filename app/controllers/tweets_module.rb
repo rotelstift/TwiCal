@@ -1,7 +1,6 @@
 module TweetsModule
-  # require 'twitter'
-  # require 'date'
-  # require 'tweet'
+  require 'twitter'
+  require 'date'
 
   TWEETS_TO_GET = 100
 
@@ -33,14 +32,17 @@ module TweetsModule
     begin
       if timeline then
         timeline = user_timeline(TWEETS_TO_GET, timeline.last.id)
-      elsif tweet_id
+      elsif !tweet_id.blank?
         timeline = user_timeline(TWEETS_TO_GET, tweet_id)
       else
         timeline = user_timeline(TWEETS_TO_GET)
       end
 
+      if timeline == [] then
+        p 'timeline is []'
+        break
+      end
 
-      # tweet_db.tweet = timeline.first
       timeline.each do |tweet|
         if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
           @tweet_counts_of_month += 1
@@ -57,7 +59,6 @@ module TweetsModule
     for i in 1..display_time.end_of_month.day do
       if tweets_in_this_month[i].last then
         tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
-        # tweet_db.save
         break
       end
     end

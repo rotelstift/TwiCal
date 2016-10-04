@@ -7,4 +7,8 @@ class CalendarControllerTest < ActionController::TestCase
     assert_select "title", "Home | TwiCal"
   end
 
+  test "should get calendar" do
+    
+  end
+
 end

@@ -53,16 +53,3 @@
     <% end %>
   <% end %>
 </table>
-
-
-<% if @tweets then %>
-  <% @tweets.each do |tweet_day| %>
-    <% if tweet_day then %>
-      <% tweet_day.each do |tweet| %>
-        <p><%= tweet[:text] %><br><%= tweet[:date_time] %> : <%= tweet[:id] %></p>
-      <% end %>
-    <% end %>
-  <% end %>
-
-  <p><%= @tweet_counts_of_month %></p>
-<% end %>
