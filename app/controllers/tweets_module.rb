@@ -31,9 +31,11 @@ module TweetsModule
     # 新しい場合にのみループする関数
     begin
       if timeline then
-        timeline = user_timeline(TWEETS_TO_GET, timeline.last.id)
+        # timeline.last.idだけを引数にすると、無限ループになる場合がある
+        # timeline = user_timeline(TWEETS_TO_GET, (timeline.last.id.to_i - 1).to_s)
+        timeline = user_timeline(TWEETS_TO_GET, tweet_db.rounding_id(timeline.last.id))
       elsif !tweet_id.blank?
-        timeline = user_timeline(TWEETS_TO_GET, tweet_id)
+        timeline = user_timeline(TWEETS_TO_GET, tweet_db.rounding_id(tweet_id))
       else
         timeline = user_timeline(TWEETS_TO_GET)
       end
@@ -50,6 +52,7 @@ module TweetsModule
           tweets_in_this_month[tweet.created_at.day].push({
             text:      tweet.full_text,
             date_time: tweet.created_at,
+            screen_name: tweet.user.screen_name,
             id:        tweet.id
           })
         end
@@ -70,9 +73,13 @@ module TweetsModule
     client = create_client
 
     if tweet_id
-      return client.user_timeline(count: count, max_id: tweet_id)
+      t_debug = client.user_timeline(count: count, max_id: tweet_id)
+      Rails.logger.debug(t_debug)
+      return t_debug
     else
-      return client.user_timeline(count: count)
+      t_debug = client.user_timeline(count: count)
+      Rails.logger.debug(t_debug)
+      return t_debug
     end
   end
 

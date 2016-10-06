@@ -3,7 +3,7 @@
   <% @tweets.each do |tweet_day| %>
     <% if tweet_day then %>
       <% tweet_day.each do |tweet| %>
-        <p><%= tweet[:text] %><br><%= tweet[:date_time] %> : <%= tweet[:id] %></p>
+        <p><%= tweet[:text] %><br><%= tweet[:date_time] %> : <%= tweet[:screen_name] %></p>
       <% end %>
     <% end %>
   <% end %>

@@ -43,6 +43,16 @@ class TweetDb < ActiveRecord::Base
       return nil
   end
 
+  def rounding_id(id)
+    return time2tweet_id(tweet_id2time(id))
+  rescue
+    return (id.to_i - 1).to_s
+  end
+
+  private def tweet_id2time(id)
+    return Time.at(((id.to_i >> 22) + 1288834974657) / 1000.0)
+  end
+
   private def time2tweet_id(time)
     # 2010年11月5日あたりにtweet_idシステムに変更が入る。
     # この関数ではその頃までしか擬似IDを作ることができないので、
