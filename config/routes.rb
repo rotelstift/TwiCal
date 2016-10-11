@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get 'calendar/home'
-  get 'calendar/calendar'
+  get 'calendar/:display_time', to: 'calendar#calendar'
   get '/auth/:provider/callback' => 'sessions#create'
   get '/delete' => 'sessions#destroy', as: :logout
   get '*path' => redirect('/')
