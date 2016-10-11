@@ -150,6 +150,7 @@ GEM
     rake (11.3.0)
     rdoc (4.2.2)
       json (~> 1.4)
+    rinku (2.0.2)
     sass (3.4.22)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -215,6 +216,7 @@ DEPENDENCIES
   pg
   rails (= 4.2.3)
   rails_12factor
+  rinku
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring

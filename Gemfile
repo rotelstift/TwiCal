@@ -32,6 +32,10 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'twitter'
 # gem "httplog"
 
+# Use auto_link
+#gem 'rails_autolink'
+gem 'rinku'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

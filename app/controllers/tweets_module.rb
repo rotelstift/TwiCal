@@ -1,6 +1,7 @@
 module TweetsModule
   require 'twitter'
   require 'date'
+  require 'rinku'
 
   TWEETS_TO_GET = 100
 
@@ -50,7 +51,7 @@ module TweetsModule
           @tweet_counts_of_month += 1
 
           tweets_in_this_month[tweet.created_at.day].push({
-            text:      tweet.full_text,
+            text:      Rinku.auto_link(tweet.full_text, :all, 'target="blank"'),
             date_time: tweet.created_at,
             screen_name: tweet.user.screen_name,
             id:        tweet.id
