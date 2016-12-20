@@ -1,0 +1,22 @@
+<% provide(:title, "schedule") %>
+<h2><%= link_to "Calendar", display_time: @schedule_day, action: 'calendar' %>#schedule</h2>
+<p><%= link_to '<<', schedule_day: @schedule_day.prev_day, action: 'schedule' %>
+   <%= @schedule_day.month %>月<%= @schedule_day.day %>日
+   <%= link_to '>>', schedule_day: @schedule_day.next_day, action: 'schedule' %>
+ </p>
+<div id='schedule_list'>
+<% if @tweets_of_day then %>
+  <% @tweets_of_day.reverse.each do |tweet| %>
+    <% if tweet then %>
+      <p>
+        <blockquote class="twitter-tweet" data-lang="ja">
+          <a href="<%= tweet.tweet_url %>"></a>
+        </blockquote>
+      </p>
+    <% end %>
+  <% end %>
+
+<% end %>
+
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div><!-- schedule_list -->

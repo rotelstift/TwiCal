@@ -2,6 +2,7 @@ require 'date'
 include TweetsModule
 include SessionsHelper
 
+
 class CalendarController < ApplicationController
   def home
 
@@ -24,6 +25,7 @@ class CalendarController < ApplicationController
   def calendar
     # 渡ってきたパラメータにvalidationをかけて、
     # 正しくなかったらrootにリダイレクトしている
+    #binding.pry
     if date_valid?(params[:display_time]) then
       # 表示したい日付を設定する
       @display_time = Date.parse(params[:display_time])
@@ -32,9 +34,12 @@ class CalendarController < ApplicationController
 
       current_user
 
+      #binding.pry
+
       if logged_in? then
         #TweetsModuleより
         @tweets = tweets_in_this_month(@display_time, @current_user)
+        #binding.pry
       end
 
     else
@@ -43,6 +48,10 @@ class CalendarController < ApplicationController
   end
 
   def schedule
+    current_user
+    @schedule_day = Date.parse(params[:schedule_day])
+    @tweets_of_day = TweetDb.get_day_tweets(@schedule_day, current_user)
+    #binding.pry
   end
 
   private def set_calendar(display_time)

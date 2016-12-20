@@ -1,8 +1,10 @@
 <div id='schedule_list'>
+  <!-- <p><%= Time.now.beginning_of_day %></p>
+  <p><%= Time.now.beginning_of_day + 1.hour %></p> -->
 <% if @tweets then %>
   <% @tweets.each do |tweet_day| %>
     <% if tweet_day then %>
-      <% tweet_day.each do |tweet| %>
+      <% tweet_day.reverse.each do |tweet| %>
         <p><%= tweet[:text].html_safe %><br><%= tweet[:date_time] %> : <%= tweet[:screen_name] %></p>
       <% end %>
     <% end %>

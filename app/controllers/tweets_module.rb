@@ -47,6 +47,7 @@ module TweetsModule
       end
 
       timeline.each do |tweet|
+        #binding.pry
         if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
           @tweet_counts_of_month += 1
 
@@ -54,16 +55,19 @@ module TweetsModule
             text:      Rinku.auto_link(tweet.full_text, :all, 'target="blank"'),
             date_time: tweet.created_at,
             screen_name: tweet.user.screen_name,
-            id:        tweet.id
+            id:        tweet.id,
+            tweet_url: tweet.url.to_s
           })
         end
       end
     end while (timeline.last.created_at >= display_time.beginning_of_month)
 
     for i in 1..display_time.end_of_month.day do
+      #binding.pry
+      tweet_db.set_day_tweets(tweets_in_this_month[i], current_user.id)
       if tweets_in_this_month[i].last then
         tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
-        break
+        #break
       end
     end
     return tweets_in_this_month
@@ -74,13 +78,15 @@ module TweetsModule
     client = create_client
 
     if tweet_id
-      t_debug = client.user_timeline(count: count, max_id: tweet_id)
-      Rails.logger.debug(t_debug)
-      return t_debug
+      # t_debug = client.user_timeline(count: count, max_id: tweet_id)
+      # Rails.logger.debug(t_debug)
+      # return t_debug
+      return client.user_timeline(count: count, max_id: tweet_id)
     else
-      t_debug = client.user_timeline(count: count)
-      Rails.logger.debug(t_debug)
-      return t_debug
+      # t_debug = client.user_timeline(count: count)
+      # Rails.logger.debug(t_debug)
+      # return t_debug
+      return client.user_timeline(count: count)
     end
   end
 

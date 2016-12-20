@@ -7,6 +7,7 @@
     <p><%= link_to '<<', display_time: @display_time.prev_month, action: 'calendar' %>
        <%= @display_time.month %>月
        <%= link_to '>>', display_time: @display_time.next_month, action: 'calendar' %>
+     </p>
   </caption>
   <tr><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th><th>日</th></tr>
   <% for i in 0...@calendar.length do %>
@@ -34,8 +35,9 @@
         <p class="tweet_count">
         <%#= @tweet_counts_of_day[@calendar[i].day] %>
         <% if @tweets then %>
-          <%= @tweets[@calendar[i].day].count %>
-          <br>tweets
+          <%= link_to schedule_day: @calendar[i], action: 'schedule' do %>
+            <%= @tweets[@calendar[i].day].count %><br>tweets
+          <% end %>
         <% end %>
       </p>
       <% end %>
