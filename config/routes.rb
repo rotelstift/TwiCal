@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'help', to: 'static_pages#help'
+
   get 'calendar/home'
   get 'calendar/:display_time', to: 'calendar#calendar'
   get '/auth/:provider/callback' => 'sessions#create'

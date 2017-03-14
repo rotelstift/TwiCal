@@ -7,13 +7,14 @@
   <%= csrf_meta_tags %>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <mata name="discription" content="自分のツイート履歴をカレンダー形式で表示するサイトです" />
 </head>
 <body>
   <div class="container">
   <header>
     <h1><a href="/">TwiCal</a></h1>
     <p class="nav">
-      <%= link_to 'Home', root_path %> :
+      <%= link_to 'Home', root_path %> : <%= link_to 'Help', :controller => 'static_pages', :action => 'help' %> : 
       <% unless logged_in? %>
         <%= link_to 'Login', '/auth/twitter' %>
       <% else %>
