@@ -11,7 +11,6 @@ module TweetsModule
     # tweets_in_this_month[day][n_tweets]となり、
     # n_tweetsにはハッシュで書き込みなどが入っている。
     tweets_in_this_month = Array.new(display_time.end_of_month.day+1){Array.new()}
-    @tweet_counts_of_month = 0
 
     # @current_user = current_user
     tweet_db = TweetDb.new
@@ -49,7 +48,6 @@ module TweetsModule
       timeline.each do |tweet|
         #binding.pry
         if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
-          @tweet_counts_of_month += 1
 
           tweets_in_this_month[tweet.created_at.day].push({
             text:      Rinku.auto_link(tweet.full_text, :all, 'target="blank"'),
