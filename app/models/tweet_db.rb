@@ -3,13 +3,11 @@ class TweetDb < ActiveRecord::Base
 
   def set_day_tweets(tweets, user_id)
     tweets.each do |tweet|
-      p tweet
       date_time = tweet[:date_time]
       tweet_id = tweet[:id]
       tweet_url = tweet[:tweet_url]
 
       unless tweet_id.blank?
-        p "test #{tweet_id}"
         TweetDb.find_or_create_by(tweet_id: tweet_id) do |t|
           t.datetime = date_time
           t.user_id = user_id
@@ -19,8 +17,6 @@ class TweetDb < ActiveRecord::Base
         return nil
       end
     end
-  # rescue
-  #   return nil
   end
 
   def self.get_day_tweets(datetime, user_id)
@@ -34,10 +30,7 @@ class TweetDb < ActiveRecord::Base
     datetime = tweet[:date_time]
     tweet_id = tweet[:id]
     tweet_url = tweet[:tweet_url]
-    # user_id = @current_user_id
 
-    # p 'tweet_id'
-    # p tweet_id
     unless tweet_id.blank?
       TweetDb.find_or_create_by(tweet_id: tweet_id) do |t|
         t.datetime = datetime
