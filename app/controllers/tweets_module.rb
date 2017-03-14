@@ -46,7 +46,6 @@ module TweetsModule
       end
 
       timeline.each do |tweet|
-        #binding.pry
         if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
 
           tweets_in_this_month[tweet.created_at.day].push({
