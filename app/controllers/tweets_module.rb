@@ -70,7 +70,9 @@ module TweetsModule
     return tweets_in_this_month
   end
 
-  private def user_timeline(count, tweet_id = nil)
+  private
+
+  def user_timeline(count, tweet_id = nil)
 
     client = create_client
 
@@ -87,7 +89,7 @@ module TweetsModule
     end
   end
 
-  private def create_client
+  def create_client
     client = Twitter::REST::Client.new do |config|
       config.consumer_key = Rails.application.secrets.twitter_api_key
       config.consumer_secret = Rails.application.secrets.twitter_api_secret
