@@ -47,23 +47,12 @@ class TweetDb < ActiveRecord::Base
 
   def get_nearest_tweet(datetime, user_id)
 
-    pulls = TweetDb.where(datetime: ((datetime + 1.month).beginning_of_month)..((datetime + 1.month).end_of_month), user_id: user_id).limit(1)
-    # TweetDb.where("datetime >= :datetime", {datetime: (DateTime.now - 1.year)}, user_id: 1).order(:datetime).limit(1)
-    # pulls = TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1)
-
-    p pulls.first
-    p pulls.first.tweet_url
-
-    if !pulls.first.blank?
-      return pulls.first.tweet_id
-    else
-      suspected_id = time2tweet_id(datetime.beginning_of_month + 1.month)
-      if suspected_id
-        return suspected_id
-      else
-        return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
-      end
-    end
+  suspected_id = time2tweet_id(datetime.beginning_of_month + 1.month)
+  if suspected_id
+    return suspected_id
+  else
+    return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
+  end
   rescue
       return nil
   end
