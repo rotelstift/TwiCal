@@ -7,23 +7,16 @@ module TweetsModule
 
 
   # 今月分のツイートをとってくる関数
-  # リファクタリングしたい
-  #
-  # 方針としては、まず変則2重ループとなっている構造をなくす
-  # そのために、ループ1とループ2に分ける
-
-
-  def tweets_in_this_month(display_time, current_user)
+    def tweets_in_this_month(display_time, current_user)
 
     # 今月のツイートを入れる配列。二次元配列になっていて、
     # tweets_in_this_month[day][n_tweets]となり、
     # n_tweetsにはハッシュで書き込みなどが入っている。
     tweets_in_this_month = Array.new(display_time.end_of_month.day+1){Array.new()}
 
-    # @current_user = current_user
     tweet_db = TweetDb.new
     tweet_db.user = current_user
-    # tweet_db.datetime = DateTime.now
+
     # timelineの初期化
     timeline = nil
 
