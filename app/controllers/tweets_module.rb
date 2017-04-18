@@ -3,7 +3,7 @@ module TweetsModule
   require 'date'
   require 'rinku'
 
-  TWEETS_TO_GET = 100
+  TWEETS_TO_GET = 200
 
 
   # 今月分のツイートをとってくる関数
@@ -20,14 +20,20 @@ module TweetsModule
     # timelineの初期化
     timeline = nil
 
+    debug_count = 0
+
     # もしdisplay_timeに近い時間のtweet_idがセットされていたら
     # それを読み込んでuser_timelineに渡したいなぁ。。。
     tweet_id = tweet_db.get_nearest_tweet(display_time, current_user.id)
+
+    last_tweet_created_at = display_time
 
     # 読み込んだ中で最古のtweetの日付が表示したい日付の月初めより
     # 新しい場合にのみループする関数
     begin
       if timeline then
+        # 今遡っている一番古いツイートを保存しておく
+        last_tweet_created_at = timeline.last.created_at
         # timeline.last.idだけを引数にすると、無限ループになる場合がある
         # timeline = user_timeline(TWEETS_TO_GET, (timeline.last.id.to_i - 1).to_s)
         timeline = timeline + user_timeline(TWEETS_TO_GET, tweet_db.rounding_id(timeline.last.id))
@@ -37,11 +43,14 @@ module TweetsModule
         timeline = user_timeline(TWEETS_TO_GET)
       end
 
+      p debug_count += 1
+
       if timeline == [] then
         p 'timeline is []'
         break
       end
-    end while (timeline.last.created_at >= display_time.beginning_of_month)
+
+    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at >= last_tweet_created_at))
 
 
 
