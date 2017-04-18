@@ -50,7 +50,7 @@ module TweetsModule
         break
       end
 
-    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at >= last_tweet_created_at))
+    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at > last_tweet_created_at))
 
 
 
