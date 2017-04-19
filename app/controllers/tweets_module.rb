@@ -20,8 +20,6 @@ module TweetsModule
     # timelineの初期化
     timeline = nil
 
-    debug_count = 0
-
     # もしdisplay_timeに近い時間のtweet_idがセットされていたら
     # それを読み込んでuser_timelineに渡したいなぁ。。。
     tweet_id = tweet_db.get_nearest_tweet(display_time, current_user.id)
@@ -43,10 +41,7 @@ module TweetsModule
         timeline = user_timeline(TWEETS_TO_GET)
       end
 
-      p debug_count += 1
-
       if timeline == [] then
-        p 'timeline is []'
         break
       end
 
