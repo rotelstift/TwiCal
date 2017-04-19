@@ -71,10 +71,10 @@ module TweetsModule
     for i in 1..display_time.end_of_month.day do
       #binding.pry
       tweet_db.set_day_tweets(tweets_in_this_month[i], current_user.id)
-      if tweets_in_this_month[i].last then
-        tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
-        #break
-      end
+      # if tweets_in_this_month[i].last then
+      #   tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
+      #   #break
+      # end
     end
     return tweets_in_this_month
   end
