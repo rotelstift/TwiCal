@@ -7,7 +7,7 @@ class CalendarController < ApplicationController
   def home
 
     # 今日の日付を設定する
-    @display_time = Date.today
+    @display_time = Date.current
 
     @calendar = set_calendar(@display_time)
 
@@ -28,7 +28,7 @@ class CalendarController < ApplicationController
     #binding.pry
     if date_valid?(params[:display_time]) then
       # 表示したい日付を設定する
-      @display_time = Date.parse(params[:display_time])
+      @display_time = Date.parse(params[:display_time], :JST)
 
       @calendar = set_calendar(@display_time)
 
@@ -49,7 +49,7 @@ class CalendarController < ApplicationController
 
   def schedule
     current_user
-    @schedule_day = Date.parse(params[:schedule_day])
+    @schedule_day = Date.parse(params[:schedule_day], :JST)
     @tweets_of_day = TweetDb.get_day_tweets(@schedule_day, current_user)
     #binding.pry
   end
