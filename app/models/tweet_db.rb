@@ -20,7 +20,7 @@ class TweetDb < ActiveRecord::Base
   end
 
   def self.get_day_tweets(datetime, user_id)
-    pulls = TweetDb.where(datetime: (datetime.beginning_of_day)..(datetime.end_of_day), user_id: user_id)
+    pulls = TweetDb.where(datetime: (datetime.beginning_of_day)..(datetime.end_of_day), user_id: user_id).order("datetime DESC")
     #pulls = TweetDb.where(datetime: datetime.day, user_id: user_id)
 
     return pulls
