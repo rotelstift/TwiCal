@@ -51,7 +51,6 @@ module TweetsModule
       if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
 
         tweets_in_this_month[tweet.created_at.getlocal.day].push({
-          text:      Rinku.auto_link(tweet.full_text, :all, 'target="blank"'),
           date_time: tweet.created_at,
           screen_name: tweet.user.screen_name,
           id:        tweet.id,
