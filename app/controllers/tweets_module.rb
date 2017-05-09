@@ -24,7 +24,7 @@ module TweetsModule
     # それを読み込んでuser_timelineに渡したいなぁ。。。
     tweet_id = tweet_db.get_nearest_tweet(display_time, current_user.id)
 
-    last_tweet_created_at = display_time
+    last_tweet_created_at = display_time.end_of_month
 
     # 読み込んだ中で最古のtweetの日付が表示したい日付の月初めより
     # 新しい場合にのみループする関数
@@ -45,9 +45,7 @@ module TweetsModule
         break
       end
 
-    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at > last_tweet_created_at))
-
-
+    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at < last_tweet_created_at))
 
     timeline.each do |tweet|
       if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
