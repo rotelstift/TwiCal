@@ -54,7 +54,7 @@ class TweetDb < ActiveRecord::Base
     return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
   end
   rescue
-      return nil
+      return 1288834974657
   end
 
   def rounding_id(id)
