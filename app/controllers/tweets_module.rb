@@ -1,37 +1,55 @@
 module TweetsModule
   require 'twitter'
   require 'date'
-  require 'rinku'
 
   TWEETS_TO_GET = 200
 
-
   # 今月分のツイートをとってくる関数
-    def tweets_in_this_month(display_time, current_user)
+  # 理想
+  # 1. Twitterサーバからデータを引っ張ってくる < get_tweets_from_twitter
+  # 2. Twitterから引っ張ってきたデータを加工し、DBにしまう < import_tweets
+  #  2.1 Twitterから引っ張ってきたデータを加工する < processing_tweets
+  #  2.2 加工したデータを日付ごとにDBにしまう < import_day_tweets
+  # 3. DBからデータを呼び出して配列にしまう < pull_tweets_fromq_db
 
-    # 今月のツイートを入れる配列。二次元配列になっていて、
-    # tweets_in_this_month[day][n_tweets]となり、
-    # n_tweetsにはハッシュで書き込みなどが入っている。
-    tweets_in_this_month = Array.new(display_time.end_of_month.day+1){Array.new()}
+  def get_tweets_in_this_month(display_time, current_user)
 
     tweet_db = TweetDb.new
-    tweet_db.user = current_user
+
+    timeline = get_tweets_from_twitter(display_time, current_user.id, tweet_db)
+
+    import_tweets(timeline, display_time, current_user.id, tweet_db)
+
+    return pull_tweets_from_db(display_time, current_user.id, tweet_db)
+
+  end
+
+  private
+
+  # Twitterサーバからデータを引っ張ってくる関数
+  def get_tweets_from_twitter(display_time, user_id, tweet_db)
+
+    # display_time.end_of_monthに一番近いIDをtweet_idに保存する
+    tweet_id = tweet_db.get_nearest_tweet(display_time, user_id)
 
     # timelineの初期化
     timeline = nil
 
-    # もしdisplay_timeに近い時間のtweet_idがセットされていたら
-    # それを読み込んでuser_timelineに渡したいなぁ。。。
-    tweet_id = tweet_db.get_nearest_tweet(display_time, current_user.id)
+    # last_tweet_created_at_one_generation_agoの初期化
+    # last_tweet_created_at_one_generation_agoはループのチェッカーとして使う
+    # 初期化の場合、表示したい月の末が入る
+    last_tweet_created_at_one_generation_ago = display_time.end_of_month
 
-    last_tweet_created_at = display_time.end_of_month
-
-    # 読み込んだ中で最古のtweetの日付が表示したい日付の月初めより
-    # 新しい場合にのみループする関数
+    # このループはまず一回は実行され、以下のいずれかの条件が満たされれば終了する
+    # ・空のタイムラインがTwitterAPIから帰ってきた場合
+    # ・読み込んだ中で最古のtweetの日付が表示したい日付の月初めより古い場合
+    # ・読み込んだ中で最古のtweetの日付がループ一世代前の最古の日付と等しい場合
+    # 最初はtimeline=nilなので、else節のどちらかに飛び、その後then節に入り、
+    # 上記の条件が満たされるまでの間then節が実行され続ける。
     begin
       if timeline then
-        # 今遡っている一番古いツイートを保存しておく
-        last_tweet_created_at = timeline.last.created_at
+        # 今遡っている一番古いツイートの時刻を保存しておく
+        last_tweet_created_at_one_generation_ago = timeline.last.created_at
         # timeline.last.idだけを引数にすると、無限ループになる場合がある
         # timeline = user_timeline(TWEETS_TO_GET, (timeline.last.id.to_i - 1).to_s)
         timeline = timeline + user_timeline(TWEETS_TO_GET, tweet_db.rounding_id(timeline.last.id))
@@ -40,38 +58,52 @@ module TweetsModule
       else
         timeline = user_timeline(TWEETS_TO_GET)
       end
+    end until ((timeline == []) ||
+               (timeline.last.created_at < display_time.beginning_of_month) ||
+               (timeline.last.created_at == last_tweet_created_at_one_generation_ago))
 
-      if timeline == [] then
-        break
-      end
+    return timeline
+  end #get_tweets_from_twitter
 
-    end while ((timeline.last.created_at >= display_time.beginning_of_month) && (timeline.last.created_at < last_tweet_created_at))
+  # Twitterから引っ張ってきたデータを加工し、DBにしまう関数
+  def import_tweets(timeline, display_time, user_id, tweet_db)
+    tweet_db.import_day_tweets(processing_tweets(timeline, display_time), user_id)
+  end #import_tweets_of
+
+  # DBからデータを呼び出して、二次元配列にしまう関数
+  def pull_tweets_from_db(display_time, user_id, tweet_db)
+    # pull_tweets[i]のなかには、i日のTweetが入る。
+    # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
+    # [0]は使わないことにする。なので、+1が付いている。
+    pull_tweets = Array.new(display_time.end_of_month.day+1)
+
+    (display_time.beginning_of_month).step(display_time.end_of_month) do |i|
+      pull_tweets[i.day] = tweet_db.get_day_tweets(i, user_id)
+    end
+
+    return pull_tweets
+  end #pull_tweets_from_db
+
+
+  def processing_tweets(timeline, display_time)
+
+    # 今月のツイートを入れる配列。
+    tweets_in_this_month = Array.new()
 
     timeline.each do |tweet|
       if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
 
-        tweets_in_this_month[tweet.created_at.getlocal.day].push({
-          date_time: tweet.created_at,
-          screen_name: tweet.user.screen_name,
-          id:        tweet.id,
-          tweet_url: tweet.url.to_s
+        tweets_in_this_month.push({
+          date_time:    tweet.created_at,
+          screen_name:  tweet.user.screen_name,
+          id:           tweet.id,
+          tweet_url:    tweet.url.to_s
         })
       end
     end
 
-
-    for i in 1..display_time.end_of_month.day do
-      #binding.pry
-      tweet_db.set_day_tweets(tweets_in_this_month[i], current_user.id)
-      # if tweets_in_this_month[i].last then
-      #   tweet_db.set_older_tweet(tweets_in_this_month[i].last, current_user.id)
-      #   #break
-      # end
-    end
     return tweets_in_this_month
-  end
-
-  private
+  end #processing_tweets
 
   def user_timeline(count, tweet_id = nil)
 

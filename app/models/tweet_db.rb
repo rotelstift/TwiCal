@@ -1,7 +1,7 @@
 class TweetDb < ActiveRecord::Base
   belongs_to :user
 
-  def set_day_tweets(tweets, user_id)
+  def import_day_tweets(tweets, user_id)
     tweets.each do |tweet|
       date_time = tweet[:date_time]
       tweet_id = tweet[:id]
@@ -19,9 +19,11 @@ class TweetDb < ActiveRecord::Base
     end
   end
 
-  def self.get_day_tweets(datetime, user_id)
+  def get_day_tweets(datetime, user_id)
     pulls = TweetDb.where(datetime: (datetime.beginning_of_day)..(datetime.end_of_day), user_id: user_id).order("datetime DESC")
     #pulls = TweetDb.where(datetime: datetime.day, user_id: user_id)
+
+    #binding.pry
 
     return pulls
   end
