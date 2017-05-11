@@ -73,9 +73,7 @@ module TweetsModule
     # pull_tweets[i]のなかには、i日のTweetが入る。
     # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
     # [0]は使わないことにする。なので、+1が付いている。
-    # [0]には[]を入れておく。
     pull_tweets = Array.new(display_time.end_of_month.day+1) { [] }
-    pull_tweets[0] = []
 
     tweet_db.get_month_tweets(display_time, user_id).each do |tweet|
       day = tweet.datetime.day
