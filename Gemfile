@@ -58,8 +58,6 @@ group :development, :test do
   # Use debugger
   gem 'pry-rails'
 
-  # Use profiling
-  gem 'stackprof'
 end
 
 group :production do
