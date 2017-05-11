@@ -42,7 +42,7 @@ class CalendarController < ApplicationController
         tweet_db = TweetDb.new
         @tweets = pull_tweets_from_db(@display_time, @current_user.id, tweet_db)
 
-        if @tweets.uniq.flatten.blank? then
+        if @tweets.flatten.blank? then
           @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
         end
         #binding.pry

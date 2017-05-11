@@ -28,6 +28,15 @@ class TweetDb < ActiveRecord::Base
     return pulls
   end
 
+  def get_month_tweets(datetime, user_id)
+    pulls = TweetDb.where(datetime: (datetime.beginning_of_month)..(datetime.end_of_month), user_id: user_id).order("datetime DESC")
+    #pulls = TweetDb.where(datetime: datetime.day, user_id: user_id)
+
+    #binding.pry
+
+    return pulls
+  end
+
   def set_older_tweet(tweet, user_id)
     datetime = tweet[:date_time]
     tweet_id = tweet[:id]

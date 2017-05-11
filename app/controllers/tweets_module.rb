@@ -73,14 +73,16 @@ module TweetsModule
     # pull_tweets[i]のなかには、i日のTweetが入る。
     # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
     # [0]は使わないことにする。なので、+1が付いている。
-    # CalendarControllerでuniq.flatten.blank?をかける関係上、
     # [0]には[]を入れておく。
-    pull_tweets = Array.new(display_time.end_of_month.day+1)
+    pull_tweets = Array.new(display_time.end_of_month.day+1) { [] }
     pull_tweets[0] = []
 
-    (display_time.beginning_of_month).step(display_time.end_of_month) do |i|
-      pull_tweets[i.day] = tweet_db.get_day_tweets(i, user_id)
+    tweet_db.get_month_tweets(display_time, user_id).each do |tweet|
+      day = tweet.datetime.day
+      pull_tweets[day] << tweet
     end
+
+    # binding.pry
 
     return pull_tweets
   end #pull_tweets_from_db
