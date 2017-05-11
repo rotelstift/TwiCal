@@ -16,7 +16,8 @@ class CalendarController < ApplicationController
 
     if logged_in? then
       #TweetsModuleより
-      @tweets = get_tweets_in_this_month(@display_time, @current_user)
+      tweet_db = TweetDb.new
+      @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
 
     end
 
@@ -38,7 +39,12 @@ class CalendarController < ApplicationController
 
       if logged_in? then
         #TweetsModuleより
-        @tweets = get_tweets_in_this_month(@display_time, @current_user)
+        tweet_db = TweetDb.new
+        @tweets = pull_tweets_from_db(@display_time, @current_user.id, tweet_db)
+
+        if @tweets.uniq.flatten.blank? then
+          @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
+        end
         #binding.pry
       end
 
@@ -51,7 +57,8 @@ class CalendarController < ApplicationController
     current_user
     tweet_db = TweetDb.new
     @schedule_day = Date.parse(params[:schedule_day], :JST)
-    @tweets_of_day = tweet_db.get_day_tweets(@schedule_day, current_user)
+    @tweets_of_day = tweet_db.get_day_tweets(@schedule_day, @current_user.id)
+    #tweet_db = nil
     #binding.pry
   end
 

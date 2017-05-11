@@ -10,17 +10,15 @@ module TweetsModule
   # 2. Twitterから引っ張ってきたデータを加工し、DBにしまう < import_tweets
   #  2.1 Twitterから引っ張ってきたデータを加工する < processing_tweets
   #  2.2 加工したデータを日付ごとにDBにしまう < import_day_tweets
-  # 3. DBからデータを呼び出して配列にしまう < pull_tweets_fromq_db
+  # 3. DBからデータを呼び出して配列にしまう < pull_tweets_from_db
 
-  def get_tweets_in_this_month(display_time, current_user)
+  def get_tweets_in_this_month(display_time, user_id, tweet_db)
 
-    tweet_db = TweetDb.new
+    timeline = get_tweets_from_twitter(display_time, user_id, tweet_db)
 
-    timeline = get_tweets_from_twitter(display_time, current_user.id, tweet_db)
+    import_tweets(timeline, display_time, user_id, tweet_db)
 
-    import_tweets(timeline, display_time, current_user.id, tweet_db)
-
-    return pull_tweets_from_db(display_time, current_user.id, tweet_db)
+    return pull_tweets_from_db(display_time, user_id, tweet_db)
 
   end
 
@@ -75,7 +73,10 @@ module TweetsModule
     # pull_tweets[i]のなかには、i日のTweetが入る。
     # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
     # [0]は使わないことにする。なので、+1が付いている。
+    # CalendarControllerでuniq.flatten.blank?をかける関係上、
+    # [0]には[]を入れておく。
     pull_tweets = Array.new(display_time.end_of_month.day+1)
+    pull_tweets[0] = []
 
     (display_time.beginning_of_month).step(display_time.end_of_month) do |i|
       pull_tweets[i.day] = tweet_db.get_day_tweets(i, user_id)
