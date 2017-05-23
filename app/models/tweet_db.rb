@@ -1,6 +1,11 @@
 class TweetDb < ActiveRecord::Base
   belongs_to :user
 
+  validates :datetime, presence: true
+  validates :tweet_id, presence: true
+  validates :user_id, presence: true
+  validates :tweet_url, presence: true
+
   def import_day_tweets(tweets, user_id)
     tweets.each do |tweet|
       date_time = tweet[:date_time]
@@ -58,12 +63,12 @@ class TweetDb < ActiveRecord::Base
 
   def get_nearest_tweet(datetime, user_id)
 
-  suspected_id = time2tweet_id(datetime.beginning_of_month + 1.month)
-  if suspected_id
-    return suspected_id
-  else
-    return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
-  end
+    suspected_id = time2tweet_id(datetime.beginning_of_month + 1.month)
+    if suspected_id
+      return suspected_id
+    else
+      return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
+    end
   rescue
       return 1288834974657
   end
