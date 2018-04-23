@@ -11,7 +11,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20180423080151) do
 
   create_table "tweets_by_days", force: :cascade do |t|
@@ -20,17 +19,6 @@ ActiveRecord::Schema.define(version: 20180423080151) do
     t.binary   "tweet_urls"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-=======
-ActiveRecord::Schema.define(version: 20161220110311) do
-
-  create_table "tweet_dbs", force: :cascade do |t|
-    t.datetime "datetime",   null: false
-    t.string   "tweet_id",   null: false
-    t.integer  "user_id",    null: false
-    t.string   "tweet_url",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
->>>>>>> parent of fc1396f... rspecのアップデートと新しいDBの作成
   end
 
   create_table "users", force: :cascade do |t|
