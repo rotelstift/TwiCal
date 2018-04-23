@@ -11,14 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180423054537) do
+ActiveRecord::Schema.define(version: 20161220110311) do
 
-  create_table "tweets_by_day", force: :cascade do |t|
-    t.datetime "tweeted_day", null: false
-    t.integer  "user_id",     null: false
-    t.binary   "tweet_urls"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+  create_table "tweet_dbs", force: :cascade do |t|
+    t.datetime "datetime",   null: false
+    t.string   "tweet_id",   null: false
+    t.integer  "user_id",    null: false
+    t.string   "tweet_url",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
