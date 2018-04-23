@@ -4,6 +4,8 @@ include SessionsHelper
 
 
 class CalendarController < ApplicationController
+  skip_before_action :require_login, only: [:home]
+  
   def home
 
     # 今日の日付を設定する
@@ -37,7 +39,7 @@ class CalendarController < ApplicationController
 
       #binding.pry
 
-      if logged_in? then
+      # if logged_in? then
         #TweetsModuleより
         tweet_db = TweetDb.new
         @tweets = pull_tweets_from_db(@display_time, @current_user.id, tweet_db)
@@ -46,7 +48,7 @@ class CalendarController < ApplicationController
           @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
         end
         #binding.pry
-      end
+      # end
 
     else
       redirect_to(root_path)

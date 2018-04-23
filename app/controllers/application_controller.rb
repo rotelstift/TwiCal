@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from Twitter::Error::TooManyRequests, with: :tweet_reach_limit
 
+  before_action :require_login
+
   def tweet_reach_limit
     render 'static_pages/tweet_reach_limit', status: 500
   end
@@ -17,6 +19,12 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= User.find(session[:user_id]) if session[:user_id]
+  end
+
+  def require_login
+    unless logged_in?
+      redirect_to(root_path)
+    end
   end
 
 end

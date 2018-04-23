@@ -13,8 +13,8 @@ describe TweetDb do
     )
     expect(tweet_db).to be_valid
   end
-  # tweet_idが入っていること
-  it "do exist tweet_id" do
+  # tweet_idがブランクの場合は弾くこと
+  it "is blank then false" do
     tweet_db = TweetDb.new(
       tweet_id: nil
     )
