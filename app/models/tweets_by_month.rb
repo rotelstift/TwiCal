@@ -12,7 +12,7 @@ class TweetsByMonth < ActiveRecord::Base
     # tweets_by_month[day]は、day = 0 ~ end_of_month.dayになるようにして、
     # tweets_by_month[0]は使わない。なので配列の宣言で＋1されている。
 
-    tweets_by_month = Array.new(tweeted_month.end_of_month.day+1, Array.new())
+    tweets_by_month = Array.new(tweeted_month.end_of_month.day+1) { [] }
 
     tweets.each do |tweet|
       if tweeted_month.beginning_of_month <= tweet[:date_time] && tweet[:date_time] < tweeted_month.end_of_month then
@@ -27,6 +27,10 @@ class TweetsByMonth < ActiveRecord::Base
       t.last_accessed_at = DateTime.now
     end
 
+  end
+
+  def get_tweets_at_month(date, user_id)
+    return TweetsByMonth.where("date.beginning_of_month <= :tweeted_month and date.end_of_month >= :tweeted_month", {tweeted_month: date} user_id: user_id).order(:tweeted_month)
   end
 
   def get_nearest_tweet(datetime, user_id)

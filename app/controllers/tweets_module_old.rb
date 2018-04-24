@@ -4,8 +4,28 @@ module TweetsModule
 
   TWEETS_TO_GET = 200
 
-  # Twitterサーバから表示したい月のデータを引っ張ってくる関数
-  def get_tweets_from_twitter_at_month(display_time, user_id, tweet_db)
+  # 今月分のツイートをとってくる関数
+  # 理想
+  # 1. Twitterサーバからデータを引っ張ってくる < get_tweets_from_twitter
+  # 2. Twitterから引っ張ってきたデータを加工し、DBにしまう < import_tweets
+  #  2.1 Twitterから引っ張ってきたデータを加工する < processing_tweets
+  #  2.2 加工したデータを日付ごとにDBにしまう < import_day_tweets
+  # 3. DBからデータを呼び出して配列にしまう < pull_tweets_from_db
+
+  def get_tweets_in_this_month(display_time, user_id, tweet_db)
+
+    timeline = get_tweets_from_twitter(display_time, user_id, tweet_db)
+
+    import_tweets(timeline, display_time, user_id, tweet_db)
+
+    return pull_tweets_from_db(display_time, user_id, tweet_db)
+
+  end
+
+  private
+
+  # Twitterサーバからデータを引っ張ってくる関数
+  def get_tweets_from_twitter(display_time, user_id, tweet_db)
 
     # display_time.end_of_monthに一番近いIDをtweet_idに保存する
     tweet_id = tweet_db.get_nearest_tweet(display_time, user_id)
@@ -41,50 +61,50 @@ module TweetsModule
                (timeline.last.created_at == last_tweet_created_at_one_generation_ago))
 
     return timeline
-  end #get_tweets_from_twitter_at_month
+  end #get_tweets_from_twitter
 
-  # # Twitterから引っ張ってきたデータを加工し、DBにしまう関数
-  # def import_tweets(timeline, display_time, user_id, tweet_db)
-  #   tweet_db.import_day_tweets(processing_tweets(timeline, display_time), user_id)
-  # end #import_tweets_of
+  # Twitterから引っ張ってきたデータを加工し、DBにしまう関数
+  def import_tweets(timeline, display_time, user_id, tweet_db)
+    tweet_db.import_day_tweets(processing_tweets(timeline, display_time), user_id)
+  end #import_tweets_of
 
-  # # DBからデータを呼び出して、二次元配列にしまう関数
-  # def pull_tweets_from_db(display_time, user_id, tweet_db)
-  #   # pull_tweets[i]のなかには、i日のTweetが入る。
-  #   # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
-  #   # [0]は使わないことにする。なので、+1が付いている。
-  #   pull_tweets = Array.new(display_time.end_of_month.day+1) { [] }
-  #
-  #   tweet_db.get_month_tweets(display_time, user_id).each do |tweet|
-  #     day = tweet.datetime.day
-  #     pull_tweets[day] << tweet
-  #   end
-  #
-  #   # binding.pry
-  #
-  #   return pull_tweets
-  # end #pull_tweets_from_db
+  # DBからデータを呼び出して、二次元配列にしまう関数
+  def pull_tweets_from_db(display_time, user_id, tweet_db)
+    # pull_tweets[i]のなかには、i日のTweetが入る。
+    # なので、31日まである月の場合、[0]~[31]までの32個分のArrayを用意して、
+    # [0]は使わないことにする。なので、+1が付いている。
+    pull_tweets = Array.new(display_time.end_of_month.day+1) { [] }
+
+    tweet_db.get_month_tweets(display_time, user_id).each do |tweet|
+      day = tweet.datetime.day
+      pull_tweets[day] << tweet
+    end
+
+    # binding.pry
+
+    return pull_tweets
+  end #pull_tweets_from_db
 
 
-  # def processing_tweets(timeline, display_time)
-  #
-  #   # 今月のツイートを入れる配列。
-  #   tweets_in_this_month = Array.new()
-  #
-  #   timeline.each do |tweet|
-  #     if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
-  #
-  #       tweets_in_this_month.push({
-  #         date_time:    tweet.created_at,
-  #         screen_name:  tweet.user.screen_name,
-  #         id:           tweet.id,
-  #         tweet_url:    tweet.url.to_s
-  #       })
-  #     end
-  #   end
-  #
-  #   return tweets_in_this_month
-  # end #processing_tweets
+  def processing_tweets(timeline, display_time)
+
+    # 今月のツイートを入れる配列。
+    tweets_in_this_month = Array.new()
+
+    timeline.each do |tweet|
+      if (tweet.created_at.year == display_time.year) && (tweet.created_at.month == display_time.month) then
+
+        tweets_in_this_month.push({
+          date_time:    tweet.created_at,
+          screen_name:  tweet.user.screen_name,
+          id:           tweet.id,
+          tweet_url:    tweet.url.to_s
+        })
+      end
+    end
+
+    return tweets_in_this_month
+  end #processing_tweets
 
   def user_timeline(count, tweet_id = nil)
 
