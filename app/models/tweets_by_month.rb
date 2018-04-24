@@ -9,7 +9,7 @@ class TweetsByMonth < ActiveRecord::Base
     # 配列に入れていく
     # 配列は2重配列で、tweets_by_month[day][n] = {tweet_id, tweet_url, tweeted_at}
     # というデータ構造になっている。
-    # tweets_by_month[day]は、day = 0 ~ end_of_dayになるようにして、
+    # tweets_by_month[day]は、day = 0 ~ end_of_month.dayになるようにして、
     # tweets_by_month[0]は使わない。なので配列の宣言で＋1されている。
 
     tweets_by_month = Array.new(tweeted_month.end_of_month.day+1, Array.new())
