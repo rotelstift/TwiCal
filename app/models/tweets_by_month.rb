@@ -4,7 +4,7 @@ class TweetsByMonth < ActiveRecord::Base
   validates :tweeted_month, presence: true
   validates :user_id, presence: true
 
-  def set_tweet_at_month(tweets, user_id, tweeted_month)
+  def set_tweet_at_month(tweets, tweeted_month, user_id)
     # tweetsを引き取り、tweeted_monthに呟かれたtweetだったら
     # 配列に入れていく
     # 配列は2重配列で、tweets_by_month[day][n] = {tweet_id, tweet_url, tweeted_at}
@@ -15,22 +15,24 @@ class TweetsByMonth < ActiveRecord::Base
     tweets_by_month = Array.new(tweeted_month.end_of_month.day+1) { [] }
 
     tweets.each do |tweet|
-      if tweeted_month.beginning_of_month <= tweet[:date_time] && tweet[:date_time] < tweeted_month.end_of_month then
-        tweets_by_month[tweet[:date_time].day] << {tweet_id: tweet[:tweet_id], tweet_url: tweet[:tweet_url], tweeted_at: tweet[:date_time]}
+      if tweeted_month.beginning_of_month <= tweet.created_at && tweet.created_at < tweeted_month.end_of_month then
+        tweets_by_month[tweet.created_at.day] << {tweet_id: tweet.id, tweet_url: tweet.url.to_s, tweeted_at: tweet.created_at}
       end
     end
 
     TweetsByMonth.find_or_create_by(tweeted_month: tweeted_month) do |t|
       t.tweeted_month = tweeted_month
       t.user_id = user_id
-      t.tweets_by_month = tweets_by_month
+      t.tweets_by_month = Marshal.dump(tweets_by_month)
       t.last_accessed_at = DateTime.now
     end
 
   end
 
   def get_tweets_at_month(date, user_id)
-    return TweetsByMonth.where("date.beginning_of_month <= :tweeted_month and date.end_of_month >= :tweeted_month", {tweeted_month: date} user_id: user_id).order(:tweeted_month)
+    # return TweetsByMonth.where("date.beginning_of_month <= :tweeted_month and date.end_of_month >= :tweeted_month", {tweeted_month: date}, user_id: user_id).order(:tweeted_month)
+    return TweetsByMonth.where("tweeted_month >= :tweeted_month_begin", {tweeted_month_begin: date.beginning_of_month}, user_id: user_id).order(:tweeted_month).limit(1).first
+
   end
 
   def get_nearest_tweet(datetime, user_id)
