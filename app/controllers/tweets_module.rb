@@ -17,7 +17,7 @@ module TweetsModule
     timeline = get_tweets_from_twitter(display_time, user_id, tweet_db)
 
     # import_tweets(timeline, display_time, user_id, tweet_db)
-    tweet_db.set_tweet_at_month(timeline, display_time, user_id)
+    tweet_db.set_older_tweet(timeline, display_time, user_id)
 
     return pull_tweets_from_db(display_time, user_id, tweet_db)
 
@@ -79,7 +79,7 @@ module TweetsModule
     #   pull_tweets[day] << tweet
     # end
 
-    pull_tweets = Marshal.load(tweet_db.get_tweets_at_month(display_time, user_id).tweets_by_month)
+    pull_tweets = Marshal.load(tweet_db.get_month_tweets(display_time, user_id).tweets_by_month)
 
     # binding.pry
 

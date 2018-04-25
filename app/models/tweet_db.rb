@@ -1,10 +1,8 @@
 class TweetDb < ActiveRecord::Base
   belongs_to :user
 
-  validates :datetime, presence: true
-  validates :tweet_id, presence: true
+  validates :tweeted_month, presence: true
   validates :user_id, presence: true
-  validates :tweet_url, presence: true
 
   def import_day_tweets(tweets, user_id)
     tweets.each do |tweet|
@@ -14,7 +12,7 @@ class TweetDb < ActiveRecord::Base
 
       unless tweet_id.blank?
         TweetDb.find_or_create_by(tweet_id: tweet_id) do |t|
-          t.datetime = date_time
+          t.tweeted_month = date_time
           t.user_id = user_id
           t.tweet_url = tweet_url
         end
@@ -24,9 +22,10 @@ class TweetDb < ActiveRecord::Base
     end
   end
 
-  def get_day_tweets(datetime, user_id)
-    pulls = TweetDb.where(datetime: (datetime.beginning_of_day)..(datetime.end_of_day), user_id: user_id).order("datetime DESC")
-    #pulls = TweetDb.where(datetime: datetime.day, user_id: user_id)
+  # 大幅な書き換え必要あり
+  def get_day_tweets(tweeted_month, user_id)
+    pulls = TweetDb.where(tweeted_month: (tweeted_month.beginning_of_day)..(tweeted_month.end_of_day), user_id: user_id).order("tweeted_month DESC")
+    #pulls = TweetDb.where(tweeted_month: tweeted_month.day, user_id: user_id)
 
     #binding.pry
 
@@ -34,40 +33,45 @@ class TweetDb < ActiveRecord::Base
   end
 
   def get_month_tweets(datetime, user_id)
-    pulls = TweetDb.where(datetime: (datetime.beginning_of_month)..(datetime.end_of_month), user_id: user_id).order("datetime DESC")
-    #pulls = TweetDb.where(datetime: datetime.day, user_id: user_id)
-
+    pulls = TweetDb.where(tweeted_month: (datetime.beginning_of_month)..(datetime.end_of_month), user_id: user_id).order("tweeted_month DESC").limit(1).first
+    #pulls = TweetDb.where(tweeted_month: tweeted_month.day, user_id: user_id)
     #binding.pry
 
     return pulls
   end
 
-  def set_older_tweet(tweet, user_id)
-    datetime = tweet[:date_time]
-    tweet_id = tweet[:id]
-    tweet_url = tweet[:tweet_url]
+  def set_older_tweet(tweets, tweeted_month, user_id)
+    # tweetsを引き取り、tweeted_monthに呟かれたtweetだったら
+    # 配列に入れていく
+    # 配列は2重配列で、tweets_by_month[day][n] = {tweet_id, tweet_url, tweeted_at}
+    # というデータ構造になっている。
+    # tweets_by_month[day]は、day = 0 ~ end_of_month.dayになるようにして、
+    # tweets_by_month[0]は使わない。なので配列の宣言で＋1されている。
 
-    unless tweet_id.blank?
-      TweetDb.find_or_create_by(tweet_id: tweet_id) do |t|
-        t.datetime = datetime
-        t.user_id = user_id
-        t.tweet_url = tweet_url
+    tweets_by_month = Array.new(tweeted_month.end_of_month.day+1) { [] }
+
+    tweets.each do |tweet|
+      if tweeted_month.beginning_of_month <= tweet.created_at && tweet.created_at < tweeted_month.end_of_month then
+        tweets_by_month[tweet.created_at.day] << {tweet_id: tweet.id, tweet_url: tweet.url.to_s, tweeted_at: tweet.created_at}
       end
-     else
-       return nil
-     end
-  rescue
-    return nil
+    end
+
+    TweetDb.find_or_create_by(tweeted_month: (tweeted_month.beginning_of_day)..(tweeted_month.end_of_day)) do |t|
+      t.tweeted_month = tweeted_month
+      t.user_id = user_id
+      t.tweets_by_month = Marshal.dump(tweets_by_month)
+      t.last_accessed_at = DateTime.now
+    end
 
   end
 
-  def get_nearest_tweet(datetime, user_id)
+  def get_nearest_tweet(tweeted_month, user_id)
 
-    suspected_id = time2tweet_id(datetime.beginning_of_month + 1.month)
+    suspected_id = time2tweet_id(tweeted_month.beginning_of_month + 1.month)
     if suspected_id
       return suspected_id
     else
-      return TweetDb.where("datetime >= :datetime", {datetime: datetime}, user_id: user_id).order(:datetime).limit(1).first.tweet_id
+      return TweetDb.where("tweeted_month >= :tweeted_month", {tweeted_month: tweeted_month}, user_id: user_id).order(:tweeted_month).limit(1).first.tweet_id
     end
   rescue
       return 1288834974657

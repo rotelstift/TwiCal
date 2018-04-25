@@ -18,7 +18,7 @@ class CalendarController < ApplicationController
 
     if logged_in? then
       #TweetsModuleより
-      tweet_db = TweetsByMonth.new
+      tweet_db = TweetDb.new
       @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
 
     end
@@ -41,11 +41,11 @@ class CalendarController < ApplicationController
 
       # if logged_in? then
         #TweetsModuleより
-        tweet_db = TweetsByMonth.new
+        tweet_db = TweetDb.new
         @tweets = pull_tweets_from_db(@display_time, @current_user.id, tweet_db)
 
         if @tweets.flatten.blank? then
-          @tweets = tweet_db.get_tweets_at_month(@display_time, @current_user.id)
+          @tweets = get_tweets_in_this_month(@display_time, @current_user.id, tweet_db)
         end
         #binding.pry
       # end
