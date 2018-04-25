@@ -44,7 +44,7 @@ class TweetsByMonth < ActiveRecord::Base
     if suspected_id
       return suspected_id
     else
-      result = TweetsByMonth.where("datetime >= :tweeted_month", {tweeted_month: datetime}, user_id: user_id).order(:tweeted_month).limit(1).first
+      result = TweetsByMonth.where("tweeted_month >= :tweeted_month_begin", {tweeted_month_begin: datetime.beginning_of_month}, user_id: user_id).order(:tweeted_month).limit(1).first
       result.last_accessed_at = DateTime.now
       result.update
 
